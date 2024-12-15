@@ -1,4 +1,4 @@
-from src.sort.bubble_sort import bubble_sort
+from sort.bubble_sort import bubble_sort
 
 
 def test_bubble_sort_empty_list():
@@ -22,4 +22,8 @@ def test_bubble_sort_character_list():
 
 
 def test_bubble_sort_string_list():
-    assert bubble_sort(["simon", "adrien", "lea"]) == ["adrien", "lea", "simon"]
+    assert bubble_sort(["simon", "adrien", "lea"]) == [
+        "adrien",
+        "lea",
+        "simon",
+    ]
