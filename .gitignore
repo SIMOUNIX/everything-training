@@ -3,3 +3,7 @@
 
 # ignore all pycache directories
 __pycache__/
+
+# lightning folders
+lightning_logs
+MNIST
