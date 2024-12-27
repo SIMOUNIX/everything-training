@@ -5,18 +5,21 @@
 # a future implementaion will be done to remove the problem
 
 def naive_reduce_list(input_str: str) -> str:
+    if not input_str:
+        return ""
+
     res = ""
     total_len = len(input_str)
-    i = 0
     acc = 1
 
-    # double while to process the total sentence and then the inner same characters sequence
-    while i < total_len - 1:
-        if input_str[i] == input_str[i + 1]:
+    for i in range(1, total_len):
+        if input_str[i] == input_str[i - 1]:
             acc += 1
         else:
             res += str(acc)
             res += input_str[i - 1]
             acc = 1
-        i += 1
+
+    # add the last character to the final string
+    res += str(acc) + input_str[-1]
     return res
