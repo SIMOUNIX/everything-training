@@ -44,6 +44,10 @@ class Decoder(nn.Module):
         # return the forward pass
         return self.l1(x)
 
+    def forward(self, x):
+        # return the forward pass
+        return self.l1(x)
+
 
 class LightningAE(L.LightningModule):
     def __init__(self, encoder, decoder, loss, optimizer):
