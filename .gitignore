@@ -1,5 +1,6 @@
 .venv
 .pytest_cache
+uv.lock
 
 # ignore all pycache directories
 __pycache__/
