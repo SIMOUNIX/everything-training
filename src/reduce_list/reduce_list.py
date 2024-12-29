@@ -4,6 +4,7 @@
 # when dealing with backslashes
 # QQQQQQ\\\\::: -> 6\Q4\\3\:
 
+
 def reduce_list(input_str: str) -> str:
     if not input_str:
         return ""
@@ -22,8 +23,9 @@ def reduce_list(input_str: str) -> str:
             res += input_str[i - 1]
             acc = 1
 
-    res += str(acc) + str("\\") + input_str[i - 1]
+    res += str(acc) + str("\\") + input_str[-1]
 
     return res
+
 
 print(reduce_list("QQQQQQ\\\\:::"))
