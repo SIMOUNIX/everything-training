@@ -2,10 +2,10 @@ from typing import Iterable, List
 
 import lightning as L
 import matplotlib.pyplot as plt
-from dataset import get_dataset
-from model import Model
 
 import torch
+from src.federated_learning.dataset import get_dataset
+from src.federated_learning.model import Model
 from torch import nn
 from torch.utils.data import DataLoader
 
@@ -73,6 +73,7 @@ def federated_learning(
         for client_idx, train_loader in enumerate(train_loaders):
             local_model = local_models[client_idx]
             local_model.load_state_dict(global_params)
+            # use the lightning trainer to train the model
             trainer = L.Trainer(max_epochs=num_epochs)
             trainer.fit(local_model, train_dataloaders=train_loader)
 
