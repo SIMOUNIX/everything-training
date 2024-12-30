@@ -13,9 +13,6 @@ NB_CLIENTS = 2
 NUM_ROUNDS = 5
 NUM_EPOCHS = 5
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Using {device} device")
-
 
 # default variables are for two models with equal weights (1/2)
 # by only chaning the number of clients the rest of the code will average the models by giving equal weights to all the clients (see NB_CLIENTS)
@@ -36,7 +33,7 @@ def update_model(model: nn.Module, new_params: dict):
     model.load_state_dict(new_params)
 
 
-def evaluate(model: nn.Module, data_loader: DataLoader) -> float:
+def evaluate(model: nn.Module, data_loader: DataLoader, device: str) -> float:
     model.eval()
     correct = 0
     total = 0
@@ -57,6 +54,7 @@ def federated_learning(
     val_loader: DataLoader,
     global_model: nn.Module,
     num_epochs: int,
+    device: str,
     lr: float = 1e-3,
 ) -> List[float]:
     global_model.to(device)
@@ -86,7 +84,7 @@ def federated_learning(
         update_model(global_model, global_params)
 
         # evaluate the global model on the validation set
-        global_accuracy = evaluate(global_model, val_loader)
+        global_accuracy = evaluate(global_model, val_loader, device)
         global_accuracies.append(global_accuracy)
         print(
             f"Global model accuracy after round {round_idx + 1}: {global_accuracy:.2f}%"
@@ -96,6 +94,9 @@ def federated_learning(
 
 
 def main():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Using {device} device")
+
     train_loaders, val_loader = get_dataset(nb_clients=NB_CLIENTS)
 
     global_model = Model(num_classes=10, input_channels=1)
@@ -105,6 +106,7 @@ def main():
         val_loader=val_loader,
         global_model=global_model,
         num_epochs=NUM_EPOCHS,
+        device=device,
     )
 
     # save the final plot
