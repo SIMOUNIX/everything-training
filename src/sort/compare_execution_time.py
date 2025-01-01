@@ -1,5 +1,5 @@
 import time
-from typing import Callable
+from typing import Callable  # to type a function parameter
 
 from src.sort.bubble_sort import bubble_sort
 from src.sort.selection_sort import selection_sort
@@ -13,7 +13,6 @@ def measure_execution_time(sort_function: Callable, data: list) -> float:
 
 
 def compare_sorting_algorithms():
-    # Generate test data
     test_data = list(range(10000, 0, -1))  # a large list in descending order
 
     selection_time = measure_execution_time(selection_sort, test_data.copy())
