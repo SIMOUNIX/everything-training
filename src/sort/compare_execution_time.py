@@ -2,7 +2,15 @@ import time
 from typing import Callable  # to type a function parameter
 
 from src.sort.bubble_sort import bubble_sort
+from src.sort.merge_sort import merge_sort_bottom_up, merge_sort_top_down
 from src.sort.selection_sort import selection_sort
+
+FUNCTIONS = {
+    "bubble_sort": bubble_sort,
+    "selection_sort": selection_sort,
+    "merge_sort_top_down": merge_sort_top_down,
+    "merge_sort_bottom_up": merge_sort_bottom_up,
+}
 
 
 def measure_execution_time(sort_function: Callable, data: list) -> float:
@@ -15,13 +23,10 @@ def measure_execution_time(sort_function: Callable, data: list) -> float:
 def compare_sorting_algorithms():
     test_data = list(range(10000, 0, -1))  # a large list in descending order
 
-    selection_time = measure_execution_time(selection_sort, test_data.copy())
-    print(f"Selection Sort Execution Time: {selection_time:.6f} seconds")
-
-    bubble_time = measure_execution_time(bubble_sort, test_data.copy())
-    print(f"Bubble Sort Execution Time: {bubble_time:.6f} seconds")
+    for name, function in FUNCTIONS.items():
+        execution_time = measure_execution_time(function, test_data)
+        print(f"{name}: {execution_time:.6f} seconds")
 
 
 if __name__ == "__main__":
     compare_sorting_algorithms()
-    # should output a factor 2 difference in execution time
