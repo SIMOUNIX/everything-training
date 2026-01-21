@@ -26,6 +26,11 @@ venv = ".venv"
 addopts = "-ra -q"
 testpaths = ["tests"]
 
+[tool.uv.workspace]
+members = [
+    "src/test_langchain",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
