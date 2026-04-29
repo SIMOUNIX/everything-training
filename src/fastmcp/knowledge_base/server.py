@@ -28,7 +28,7 @@ def create_note(title: str, content: str, tags: list[str]):
     tags_str = ", ".join(tags)
 
     frontmatter = (
-        f"---\ntitle:{title}\ntags:{tags_str}\ncreated_at{datetime.now}\n---\n\n"
+        f"---\ntitle: {title}\ntags: {tags_str}\ncreated_at: {datetime.now()}\n---\n\n"
     )
     final_content = f"{frontmatter}{content}"
     _ = path.write_text(data=final_content)
