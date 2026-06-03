@@ -13,3 +13,4 @@ lightning_logs
 MNIST
 
 .DS_Store
+.ocr_cache
