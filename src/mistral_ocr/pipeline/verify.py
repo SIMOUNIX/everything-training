@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 
 from .normalize import normalize_text, parse_number
 
-# TODO: define and explain the value of those
 _AMOUNT_TOLERANCE = 0.01
+# TODO: might be finetune to find the best similarity treshold
 _NAME_MATCH_THRESHOLD = 0.3
 _NUMBER_CELL = re.compile(r"[\s\d.,%€$+\-()]+")
 # Annotation fields whose value should appear among the matched row's cells.
@@ -57,7 +57,7 @@ def _html_rows(pages: List[dict]) -> List[_HtmlRow]:
             for tr in table.find_all("tr")[1:]:
                 # cells are between <th> ... </th> or <td> ... </td>, h is for header and d is for cell containing data
                 cells = tr.find_all(["td", "th"])
-                # TODO: to define under
+                # colspan > 1 means the cell takes X cell span and almost always is not part of the article table but summary
                 if any(int(c.get("colspan", 1) or 1) > 1 for c in cells):
                     continue  # structural summary row
                 texts = [c.get_text(" ", strip=True) for c in cells]
@@ -74,7 +74,9 @@ def _html_rows(pages: List[dict]) -> List[_HtmlRow]:
 def _best_match(tokens: Set[str], rows: List[_HtmlRow]) -> Optional[_HtmlRow]:
     best, best_score = None, 0.0
     for row in rows:
-        # TODO: explaine me this, is it to compare the length of union and see if similar to both of the inputs -> making them the same tokens?
+        # jaccard comparison between two sets
+        # 0 to 1 scale of tokens matching, we divide the len of intersection to the union
+        # 0 means no tokens match and 1 means exactly the same
         union = tokens | row.tokens
         if union:
             score = len(tokens & row.tokens) / len(union)
@@ -87,22 +89,26 @@ def _present(value: float, numbers: List[float]) -> bool:
     return any(abs(abs(value) - abs(n)) <= _AMOUNT_TOLERANCE for n in numbers)
 
 
-# TODO: explain me more this function
 def verify(annotation: dict, pages: List[dict]) -> Verification:
+    # we check annotation results against the exact OCR results
     available = _html_rows(pages)
     report = Verification(html_row_count=len(available))
 
-    # Annotation class contains rows if articles were found
+    # annotation class contains rows if articles were found
     for row in annotation.get("rows", []):
         name = row.get("name") or ""
         is_article = row.get("kind") == "article"
         if not is_article:
+            # store for audit
             report.non_article_rows.append((name, row.get("kind") or "unknown"))
 
         match = _best_match(_name_tokens(name), available)
         if match is not None:
-            available.remove(match)  # consume the row whatever its kind
+            available.remove(
+                match
+            )  # consume the row whatever its kind, remove for next iteration
         elif is_article:
+            # no match but the annotation row is an article
             report.unmatched_article_names.append(name)
             continue
 
