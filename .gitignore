@@ -3,9 +3,13 @@
 .pytest_cache
 uv.lock
 
+src/mistral_ocr/data
+
 # ignore all pycache directories
 __pycache__/
 
 # lightning folders
 lightning_logs
 MNIST
+
+.DS_Store
