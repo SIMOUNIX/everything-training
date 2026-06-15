@@ -12,6 +12,8 @@ from mistralai.extra import response_format_from_pydantic_model
 from pydantic import BaseModel, Field
 from typing_extensions import Literal
 
+from .models import ArticleType
+
 _CACHE_DIR = Path(__file__).resolve().parent / ".ocr_cache"
 
 # The model interprets headers in any language and fills the schema below (which
@@ -26,7 +28,16 @@ ANNOTATION_PROMPT = (
     "still an article; a row at the top/bottom of a page is still an article), "
     "'subtotal'/'total' (brut/net/HT/TVA/TTC summaries), 'deposit', 'payment', "
     "'footer' (free text/legal) or 'other'. Use the column headers to decide "
-    "HT vs TTC and amount vs percentage. Copy every amount exactly as printed."
+    "HT vs TTC and amount vs percentage. Copy every amount exactly as printed. "
+    "For each article row set 'type' as follows — 1: vehicle/bike/scooter/e-bike "
+    "(the main purchased vehicle); 2: lock/antitheft/cable; "
+    "3: refundable accessory (accessory tightly/permanently attached to the bike — "
+    "e.g. integrated lights, mudguards, built-in rack, permanently fixed lock); "
+    "4: non-refundable accessory or anything else (easily removable items like helmet, "
+    "bag, child seat, portable lock, service, insurance). "
+    "For buyer information: extract the customer's first name into 'buyer_firstname' "
+    "and last name into 'buyer_lastname' from the invoice header or billing address. "
+    "If only a full name is shown, split it as 'Firstname Lastname'."
 )
 
 
@@ -44,11 +55,14 @@ class _Row(BaseModel):
     tva_percentage: Optional[float] = None
     tva_amount: Optional[float] = None
     total_ttc: Optional[float] = None
+    type: ArticleType = ArticleType.NON_REFUNDABLE_ACCESSORY
 
 
 class _Annotation(BaseModel):
-    # TODO: check naming we sharelock db
+    # TODO: check naming w sharelock db
     vendor_name: Optional[str] = None
+    buyer_firstname: Optional[str] = None
+    buyer_lastname: Optional[str] = None
     invoice_number: Optional[str] = None
     total_ht: Optional[float] = None
     total_tva: Optional[float] = None

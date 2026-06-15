@@ -1,5 +1,13 @@
 from dataclasses import asdict, dataclass, field
+from enum import Enum
 from typing import List, Optional
+
+
+class ArticleType(Enum):
+    VEHICLE = 1
+    LOCK = 2
+    REFUNDABLE_ACCESSORY = 3
+    NON_REFUNDABLE_ACCESSORY = 4
 
 
 @dataclass
@@ -15,7 +23,7 @@ class Article:
     predicted_tva_percentage: Optional[float] = None
     predicted_tva_amount: Optional[int] = None
     predicted_total_ttc: Optional[int] = None
-    type: str = "NON_REFUNDABLE_ACCESSORY"
+    type: ArticleType = ArticleType.NON_REFUNDABLE_ACCESSORY
     is_refundable: bool = False
 
     def to_orm_kwargs(self) -> dict:
@@ -25,6 +33,8 @@ class Article:
 @dataclass
 class InvoicePrediction:
     vendor_name: Optional[str] = None
+    buyer_firstname: Optional[str] = None
+    buyer_lastname: Optional[str] = None
     invoice_number: Optional[str] = None
     total_price_without_taxes: Optional[int] = None
     taxes: Optional[int] = None

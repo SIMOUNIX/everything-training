@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from .models import Article
+from .models import Article, ArticleType
 from .normalize import to_cents, to_percent, to_quantity
 
 
@@ -10,7 +10,15 @@ def _abs_cents(value: object) -> Optional[int]:
     return abs(cents) if cents is not None else None
 
 
+def _parse_type(raw) -> ArticleType:
+    try:
+        return ArticleType(int(raw))
+    except (TypeError, ValueError):
+        return ArticleType.NON_REFUNDABLE_ACCESSORY
+
+
 def _to_article(row: dict) -> Article:
+    article_type = _parse_type(row.get("type"))
     return Article(
         predicted_name=" ".join((row.get("name") or "").split()),
         predicted_quantity=to_quantity(row.get("quantity")),
@@ -21,6 +29,8 @@ def _to_article(row: dict) -> Article:
         predicted_tva_percentage=to_percent(row.get("tva_percentage")),
         predicted_tva_amount=to_cents(row.get("tva_amount")),
         predicted_total_ttc=to_cents(row.get("total_ttc")),
+        type=article_type,
+        is_refundable=article_type != ArticleType.NON_REFUNDABLE_ACCESSORY,
     )
 
 

@@ -4,6 +4,7 @@ from .models import (
     InvoicePrediction,
     PipelineResult,
     Reconciliation,
+    ArticleType,
 )
 from .pipeline import run_pipeline
 
@@ -14,4 +15,5 @@ __all__ = [
     "Reconciliation",
     "DroppedRow",
     "PipelineResult",
+    "ArticleType",
 ]
